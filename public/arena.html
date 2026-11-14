@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<link rel="icon" href="data:,">
+<title>Selena Zenith — Arena</title>
+<style>
+:root{--p:#8b5cf6;--p2:#c4b5fd;--bg:#07060d;--safe-b:env(safe-area-inset-bottom,0px);--safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{margin:0;height:100%;background:var(--bg);color:#e9e4ff;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;inset:0;pointer-events:none}
+#top{position:absolute;left:calc(12px + var(--safe-l));top:12px;width:min(260px,50vw)}
+#hp{height:12px;border-radius:7px;background:#1a1530;border:1px solid #3b2f6b;overflow:hidden}
+#hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7c3aed,#c084fc);transition:width .15s}
+#info{margin-top:6px;font-size:13px;color:var(--p2);text-shadow:0 1px 4px #000}
+#msg{position:absolute;left:50%;top:22%;transform:translateX(-50%);padding:8px 16px;border-radius:12px;background:rgba(20,14,40,.72);border:1px solid #4c3a8f;opacity:0;transition:opacity .3s;text-align:center;max-width:86vw}
+#msg.on{opacity:1}
+#hurt{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(220,38,38,.55));opacity:0;transition:opacity .25s}
+#hint{position:absolute;left:calc(12px + var(--safe-l));bottom:12px;font-size:12px;color:#a99bd8;opacity:.85;line-height:1.6}
+body.touch #hint{display:none}
+#btns,#joy{display:none}
+body.touch #btns,body.touch #joy{display:block}
+#joy{position:absolute;left:calc(22px + var(--safe-l));bottom:calc(26px + var(--safe-b));width:128px;height:128px;border-radius:50%;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.45)}
+#knob{position:absolute;left:44px;top:44px;width:40px;height:40px;border-radius:50%;background:rgba(196,181,253,.55);border:1px solid #c4b5fd}
+#btns{position:absolute;right:calc(14px + var(--safe-r));bottom:calc(18px + var(--safe-b));width:210px;height:210px;pointer-events:none}
+.b{position:absolute;pointer-events:auto;border-radius:50%;background:rgba(30,20,60,.62);border:1.5px solid #7c5cf0;color:#e9e4ff;display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden}
+.b span{position:relative;z-index:1}
+.b .cd{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(0,0,0,.62)}
+.b:active{background:rgba(124,92,240,.55)}
+#atk{right:0;bottom:0;width:84px;height:84px;font-size:15px}
+#q{right:92px;bottom:8px;width:56px;height:56px}
+#e{right:80px;bottom:80px;width:56px;height:56px}
+#jump{right:8px;bottom:92px;width:56px;height:56px;font-size:11px}
+#b{right:12px;bottom:158px;width:46px;height:46px;font-size:12px}
+#v{right:68px;bottom:150px;width:42px;height:42px;font-size:12px}
+#spr{right:124px;bottom:150px;width:42px;height:42px;font-size:10px}
+#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 40%,#241047,#07060d 70%);z-index:10;transition:opacity .5s}
+#loading.done{opacity:0;pointer-events:none}
+#loading h1{margin:0;font-size:24px;letter-spacing:.06em;color:var(--p2)}
+#bar{width:min(260px,70vw);height:6px;border-radius:4px;background:#1a1530;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:var(--p);transition:width .2s}
+#lmsg{font-size:12px;color:#a99bd8}
+#start{display:none;padding:12px 34px;border-radius:26px;border:1.5px solid var(--p);background:rgba(139,92,246,.2);color:#fff;font-size:16px;font-weight:700;pointer-events:auto;touch-action:manipulation;cursor:pointer}
+</style>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div id="top"><div id="hp"><i></i></div><div id="info">Gelombang 0 · Skor 0</div></div>
+  <div id="msg"></div>
+  <div id="hurt"></div>
+  <div id="hint">WASD gerak · Shift lari cepat · Spasi lompat<br>Klik kiri / J serang (kombo) · Q jurus 1 · E jurus 2 · B pulang · V suara<br>Seret mouse untuk memutar kamera · roda mouse zoom</div>
+  <div id="joy"><div id="knob"></div></div>
+  <div id="btns">
+    <div class="b" id="atk"><span>SERANG</span></div>
+    <div class="b" id="q"><span>Q</span><div class="cd"></div></div>
+    <div class="b" id="e"><span>E</span><div class="cd"></div></div>
+    <div class="b" id="jump"><span>LONCAT</span></div>
+    <div class="b" id="b"><span>B</span><div class="cd"></div></div>
+    <div class="b" id="v"><span>V</span></div>
+    <div class="b" id="spr"><span>LARI</span></div>
+  </div>
+</div>
+<div id="loading"><h1>SELENA ZENITH</h1><div id="bar"><i></i></div><div id="lmsg">Memuat…</div><button id="start">MULAI</button></div>
+<script type="module" src="/arena.js?v=1"></script>
+</body>
+</html>

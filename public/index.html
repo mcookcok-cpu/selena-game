@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<link rel="icon" href="data:,">
+<title>Selena Surf</title>
+<style>
+:root{--p:#8b5cf6;--p2:#c4b5fd;--bg:#07060d;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{margin:0;height:100%;background:var(--bg);color:#efeaff;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;inset:0;pointer-events:none}
+#top{position:absolute;left:10px;right:10px;top:calc(10px + var(--st));display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pill{padding:5px 12px;border-radius:18px;background:rgba(20,14,40,.66);border:1px solid #4c3a8f;font-weight:700;font-size:15px}
+#score{font-size:19px;min-width:90px}#coin{color:#ffd166}#mult{color:#f0abfc}#keys{color:#67e8f9}
+#pause{margin-left:auto;pointer-events:auto;width:38px;height:34px;border-radius:12px;background:rgba(20,14,40,.66);border:1px solid #4c3a8f;color:#fff;font-weight:800}
+#chips{position:absolute;left:10px;top:calc(56px + var(--st));display:flex;flex-direction:column;gap:4px}
+.chip{display:none;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:800;color:#0a0714}
+#mm{position:absolute;right:10px;top:calc(56px + var(--st));max-width:46vw;font-size:11px;color:#cfc4ff;text-align:right;text-shadow:0 1px 3px #000;line-height:1.5}
+#mm .d{color:#86efac}
+#toast{position:absolute;left:50%;top:26%;transform:translateX(-50%);padding:8px 16px;border-radius:12px;background:rgba(20,14,40,.8);border:1px solid #7c5cf0;font-weight:700;text-align:center;max-width:88vw;opacity:0;transition:opacity .25s}
+#toast.on{opacity:1}
+#hurt{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(220,38,38,.6));opacity:0}
+#boardBtn{position:absolute;right:12px;bottom:calc(76px + var(--sb));pointer-events:auto;width:62px;height:62px;border-radius:50%;background:rgba(14,40,60,.7);border:1.5px solid #38bdf8;color:#e0f2fe;font-weight:800;font-size:11px;line-height:1.2}
+#boardBtn.off{opacity:.4}
+#hint{position:absolute;left:0;right:0;bottom:calc(16px + var(--sb));text-align:center;font-size:12px;color:#b7a9e8;text-shadow:0 1px 4px #000;transition:opacity .6s}
+.panel{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:9px;background:rgba(7,6,13,.66);text-align:center;z-index:5;padding:16px}
+.panel.on{display:flex}
+.panel h2{margin:0;font-size:28px;color:var(--p2);letter-spacing:.05em}
+.big{font-size:42px;font-weight:800;color:#fff;line-height:1}
+.sub{color:#ffd166;font-weight:700}.dim{color:#b7a9e8;font-size:13px}
+.btn{padding:10px 24px;border-radius:24px;border:1.5px solid var(--p);background:rgba(139,92,246,.24);color:#fff;font-weight:700;font-size:15px;touch-action:manipulation;cursor:pointer;min-width:150px}
+.btn.s{min-width:0;font-size:13px;padding:7px 14px;border-color:#4c3a8f;background:rgba(40,30,80,.6)}
+.btn[disabled]{opacity:.4}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#mlist,#olist{text-align:left;font-size:13px;line-height:1.7;min-width:240px;max-width:86vw}
+#mlist .d,#olist .d{color:#86efac}
+#rev-n{font-size:56px;font-weight:800;color:#fff}
+#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 40%,#241047,#07060d 70%);z-index:10;transition:opacity .5s}
+#loading.done{opacity:0;pointer-events:none}
+#loading h1{margin:0;font-size:26px;letter-spacing:.08em;color:var(--p2)}
+#bar{width:min(260px,70vw);height:6px;border-radius:4px;background:#1a1530;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:var(--p);transition:width .2s}
+#lmsg{font-size:12px;color:#a99bd8}
+</style>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div id="top"><div class="pill" id="score">0</div><div class="pill" id="coin">● 0</div><div class="pill" id="mult">x1</div><div class="pill" id="keys">Kunci 0</div><button id="pause">❚❚</button></div>
+  <div id="chips"></div>
+  <div id="mm"></div>
+  <div id="toast"></div>
+  <div id="hurt"></div>
+  <button id="boardBtn">PAPAN<br><span id="bn">0</span></button>
+  <div id="hint">Geser ← → pindah jalur · ↑ lompat · ↓ merunduk · ketuk 2x atau H papan<br>Keyboard: A/D, W/Spasi, S, H, P jeda</div>
+</div>
+
+<div class="panel" id="menu">
+  <h2>SELENA SURF</h2>
+  <div class="dim" id="m-best"></div>
+  <div class="sub" id="m-wallet"></div>
+  <div id="mlist"></div>
+  <div class="btn" id="m-play">MAIN</div>
+  <div class="row"><div class="btn s" id="m-music"></div><div class="btn s" id="m-sfx"></div></div>
+</div>
+<div class="panel" id="pausep">
+  <h2>JEDA</h2>
+  <div class="btn" id="p-resume">Lanjut</div>
+  <div class="btn s" id="p-restart">Mulai ulang</div><div class="btn s" id="p-menu">Menu</div>
+</div>
+<div class="panel" id="revive">
+  <h2>TERTANGKAP!</h2>
+  <div id="rev-n">5</div>
+  <div class="dim" id="rev-cost"></div>
+  <div class="btn" id="rev-yes">Lanjut</div>
+  <div class="btn s" id="rev-no">Selesai</div>
+</div>
+<div class="panel" id="over">
+  <h2>TERJATUH</h2>
+  <div class="big" id="o-score">0</div>
+  <div class="dim" id="o-line"></div>
+  <div class="dim" id="o-best"></div>
+  <div id="olist"></div>
+  <div class="sub" id="o-wallet"></div>
+  <div class="btn" id="o-again">Main lagi</div>
+  <div class="row"><div class="btn s" id="o-key">Beli kunci (200 ●)</div><div class="btn s" id="o-board">Beli papan (150 ●)</div><div class="btn s" id="o-menu">Menu</div></div>
+</div>
+<div id="loading"><h1>SELENA SURF</h1><div id="bar"><i></i></div><div id="lmsg">Memuat…</div></div>
+<script type="module" src="/game.js?v=4"></script>
+</body>
+</html>

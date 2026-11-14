@@ -1,0 +1,48 @@
+feature,area,priority,original,clone,notes
+Auto-run forward with speed that keeps rising,core run,must,yes,yes,13 to 30 m/s over about two minutes
+Three lanes with swipe left and right to change lane,core run,must,yes,yes,
+Swipe up to jump,core run,must,yes,yes,jump arc is physics; no jump clip in the rig
+Swipe down to roll under barriers,core run,must,yes,partial,body tilt stands in for a roll animation
+Swipe down in the air to drop fast,core run,should,yes,yes,
+Low barriers that must be jumped,obstacles,must,yes,yes,
+Overhead barriers that must be rolled under,obstacles,must,yes,yes,
+Trains and blocks that must be dodged by changing lane,obstacles,must,yes,yes,
+Ramps that lead up onto train roofs,obstacles,should,yes,no,
+Run along train roofs,obstacles,should,yes,no,
+Moving trains that come at different speeds,obstacles,could,yes,no,
+Coins in lines and arcs over barriers,collectibles,must,yes,yes,
+First mistake is a stumble and the second one in a few seconds ends the run,fail state,must,yes,yes,two hits within 4 s; tested
+A chaser (guard and dog) visible behind you after a stumble,fail state,should,yes,yes,own chaser design (shadow figure); tested visible after stumble
+Crash ends the run,fail state,must,yes,yes,currently one hit ends the run
+Score grows with distance,scoring,must,yes,yes,
+Score multiplier applied to the run score,scoring,must,yes,yes,mult x1..x30 saved; x2 power-up tested ~1.99
+Mission sets of three that raise the base multiplier by one up to x30,scoring,should,yes,yes,"3 missions, set done = +1 mult, +1 key, +1 board; tested"
+Missions shown during the run and a missions screen,scoring,should,yes,yes,mini HUD plus list on menu and results
+Coin magnet power-up picked up on the track,power-ups,should,yes,yes,tested pulls coins from other lanes
+Jetpack power-up that flies above trains and trails coins,power-ups,should,yes,yes,tested flies over blocks and trails coins
+2x multiplier power-up,power-ups,should,yes,yes,tested
+Super sneakers power-up that raises jump height,power-ups,should,yes,yes,jump peak 3.58 m vs 1.73 m normal (wiki version)
+Pogo stick power-up,power-ups,could,yes,no,
+Power-up timers on the HUD,power-ups,should,yes,yes,chips on HUD
+Power-up upgrade levels bought with coins,power-ups,could,yes,no,wiki lists six levels with +5 s each
+Hoverboard that absorbs one crash,protection,should,yes,yes,"own board design; tested absorbs one crash, 15 s"
+Activate the hoverboard on demand (double tap or space),protection,should,yes,yes,button, double tap, or H key
+Keys as a second currency,economy,should,yes,yes,saved on device; set rewards give keys
+Revive after a crash by spending a key with a short countdown,economy,should,yes,yes,"5 s countdown, cost rises each revive; tested"
+Coins as the main currency kept between runs,economy,should,yes,yes,"wallet kept between runs; buy key 200, board 150"
+Pause menu,screens,should,yes,yes,"resume, restart, menu; world stops; tested"
+Main menu with play and shortcuts,screens,should,yes,yes,"best, wallet, missions, play, toggles"
+Results screen with score coins and best,screens,should,yes,yes,
+High score saved on the device,screens,should,yes,yes,localStorage
+Sound effects,audio,should,yes,yes,synthesised
+Background music,audio,should,yes,yes,"synthesised loop, toggle in menu"
+Scrolling city backdrop,visuals,should,yes,yes,own neon city design
+Settings for sound and music,screens,could,yes,yes,music and sfx toggles on menu
+Headstart or score booster before a run,power-ups,could,yes,no,
+Mystery box that pays out random rewards,economy,could,yes,no,
+Unlockable characters and boards bought with coins or keys,economy,could,yes,no,own roster only; one character exists
+Locations that change on a schedule (world tour),content,could,yes,no,
+Daily challenges and weekly hunts,content,could,yes,skip,live-service events run from their servers
+Leaderboards and social connect,content,could,yes,skip,their network of players
+In-app purchases and ads,economy,could,yes,skip,not part of the play you can rebuild
+"Original characters, the Inspector, the dog and the art",licensed,could,yes,skip,belongs to SYBO and Kiloo
